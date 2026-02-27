@@ -98,7 +98,7 @@ In non-interactive agent execution, use `printf 'Y\n' | lamdera init` to satisfy
 Before login/check/deploy, ensure app context exists: git repository with a configured `lamdera` remote.
 
 2. Start local development.
-Run `lamdera live` and iterate using Lamdera compiler feedback and live reload.
+Run `lamdera live` in an attached PTY session (not detached/background) and iterate using Lamdera compiler feedback and live reload.
 
 3. Resolve build/runtime blockers.
 If caches/tooling are inconsistent, run `lamdera reset`, then continue with `lamdera live`.
