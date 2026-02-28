@@ -119,6 +119,8 @@ For setup/execution, prefer local install with `npm install --save-dev elm-revie
 If `review/` is missing and user opts in to `elm-review`, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
 When eligible (and initialized when needed), run `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
 Report each finding with a markdown source link using `path:line:column` from `region.start` (prefer absolute file links when workspace path is known), plus rule and message.
+If findings are reported, offer the user an optional auto-fix run with `npx elm-review --fix-all-without-prompt --allow-remove-files` for local installs, or `elm-review --fix-all-without-prompt --allow-remove-files` for global installs.
+After auto-fix, re-run compile verification, then re-run `elm-review --report=json`, and report what was fixed vs what remains.
 If compile verification failed, skip `elm-review` and report it as blocked by compile failure.
 
 6. Enforce deployment prerequisites.
@@ -139,12 +141,14 @@ After providing code or concrete implementation advice:
 5. If `review/` is missing and user opts in, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
 6. When eligible (and initialized when needed), run `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
 7. Report `elm-review` findings as markdown links with `path:line:column` using each error's `region.start`.
-8. Then select any additional verification commands from project-local scripts/config.
-9. If `lamdera` CLI is not available and no project-defined verification command exists, report "not runnable with current project metadata" instead of guessing commands.
-10. If tests are present, run relevant tests and report the result.
-11. Keep command guidance Lamdera-first; allow optional `elm-review` commands.
-12. If verification cannot run, state exactly what was not run and why.
-13. Never say "done/fixed/works" without command-backed evidence.
+8. If findings exist, offer optional auto-fix (`npx elm-review --fix-all-without-prompt --allow-remove-files` for local installs, or `elm-review --fix-all-without-prompt --allow-remove-files` for global installs).
+9. If auto-fix runs, re-run compile verification, then re-run `elm-review --report=json`, and report resolved vs remaining findings.
+10. Then select any additional verification commands from project-local scripts/config.
+11. If `lamdera` CLI is not available and no project-defined verification command exists, report "not runnable with current project metadata" instead of guessing commands.
+12. If tests are present, run relevant tests and report the result.
+13. Keep command guidance Lamdera-first; allow optional `elm-review` commands.
+14. If verification cannot run, state exactly what was not run and why.
+15. Never say "done/fixed/works" without command-backed evidence.
 
 Use this entry file selection rule for local compile fallback:
 1. Prefer `src/Frontend.elm` when present.

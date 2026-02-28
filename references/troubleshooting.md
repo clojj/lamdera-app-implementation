@@ -38,10 +38,12 @@ Use this after classifying as `review-debug` (or `mixed` including debug).
 5. If `review/` is missing and user opts in, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
 6. When eligible (and initialized when needed), run `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
 7. Report `elm-review` findings as markdown links with `path:line:column` using each error's `region.start`.
-8. Then select additional verification commands from project-local scripts/config.
-9. If `lamdera` CLI is unavailable and no project-defined verification command exists, report verification as not runnable instead of guessing commands.
-10. If tests are present, run relevant tests for affected areas.
-11. Report exact command outcomes, or state clearly what could not be run and why.
+8. If findings exist, offer optional auto-fix with `npx elm-review --fix-all-without-prompt --allow-remove-files` for local installs, or `elm-review --fix-all-without-prompt --allow-remove-files` for global installs.
+9. If auto-fix runs, re-run compile verification, then re-run `elm-review --report=json`, and report resolved vs remaining findings.
+10. Then select additional verification commands from project-local scripts/config.
+11. If `lamdera` CLI is unavailable and no project-defined verification command exists, report verification as not runnable instead of guessing commands.
+12. If tests are present, run relevant tests for affected areas.
+13. Report exact command outcomes, or state clearly what could not be run and why.
 
 Use this entry file selection rule for local compile fallback:
 1. Prefer `src/Frontend.elm` when present.
@@ -59,3 +61,4 @@ Use this entry file selection rule for local compile fallback:
 1. If `elm-review` command is missing, prefer local install with `npm install --save-dev elm-review` and run via `npx elm-review`; global install via `npm install -g elm-review` is allowed.
 2. If `review/` does not exist and user opts in, initialize with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
 3. If compile checks fail, skip `elm-review` and report it as blocked by compile failure.
+4. If findings are reported and user wants auto-fix, run `npx elm-review --fix-all-without-prompt --allow-remove-files` for local installs, or `elm-review --fix-all-without-prompt --allow-remove-files` for global installs, then re-run compile verification and `elm-review --report=json`.

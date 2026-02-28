@@ -30,6 +30,7 @@ Compiles Elm code for local verification when app-remote context is unavailable.
 1. `lamdera backend --help`
 2. `lamdera backend --import=... --eval=...`
 3. `npx elm-review --report=json` / `elm-review --report=json` (optional)
+4. `npx elm-review --fix-all-without-prompt --allow-remove-files` / `elm-review --fix-all-without-prompt --allow-remove-files` (optional auto-fix after findings)
 
 ## Optional setup commands
 
@@ -46,11 +47,13 @@ After providing code or concrete implementation advice:
 5. If `review/` is missing and user opts in, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
 6. When eligible (and initialized when needed), run optional `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
 7. Report `elm-review` findings as markdown links with `path:line:column` from each error's `region.start`.
-8. Then select additional verification commands from project-local scripts/config.
-9. If `lamdera` CLI is not available and no project-defined verification command exists, report that verification is not runnable with current project metadata.
-10. If tests are present, run relevant tests and report result.
-11. If verification cannot run, state what was skipped and why.
-12. Do not claim completion without command-backed evidence.
+8. If findings exist, offer optional auto-fix with `npx elm-review --fix-all-without-prompt --allow-remove-files` for local installs, or `elm-review --fix-all-without-prompt --allow-remove-files` for global installs.
+9. If auto-fix runs, re-run compile verification and then `elm-review --report=json`; report resolved vs remaining findings.
+10. Then select additional verification commands from project-local scripts/config.
+11. If `lamdera` CLI is not available and no project-defined verification command exists, report that verification is not runnable with current project metadata.
+12. If tests are present, run relevant tests and report result.
+13. If verification cannot run, state what was skipped and why.
+14. Do not claim completion without command-backed evidence.
 
 Use this entry file selection rule for local compile fallback:
 1. Prefer `src/Frontend.elm` when present.
