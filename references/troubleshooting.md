@@ -33,11 +33,15 @@ Use this after classifying as `review-debug` (or `mixed` including debug).
 
 1. After suggesting a fix, run `lamdera check` if `lamdera` CLI and app context are available.
 2. If app context is missing, run `lamdera make <entry-elm-file> --output=/dev/null` and report that `lamdera check` was blocked by missing `lamdera` remote.
-3. Then select additional verification commands from project-local scripts/config.
-4. If `lamdera` CLI is unavailable and no project-defined verification command exists, report verification as not runnable instead of guessing commands.
-5. Run relevant build/compile checks.
-6. If tests are present, run relevant tests for affected areas.
-7. Report exact command outcomes, or state clearly what could not be run and why.
+3. Run relevant build/compile checks.
+4. If code changed and compile verification succeeded, run optional `elm-review` only when `review/` already exists or user explicitly opts in.
+5. If `review/` is missing and user opts in, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
+6. When eligible (and initialized when needed), run `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
+7. Report `elm-review` findings as markdown links with `path:line:column` using each error's `region.start`.
+8. Then select additional verification commands from project-local scripts/config.
+9. If `lamdera` CLI is unavailable and no project-defined verification command exists, report verification as not runnable instead of guessing commands.
+10. If tests are present, run relevant tests for affected areas.
+11. Report exact command outcomes, or state clearly what could not be run and why.
 
 Use this entry file selection rule for local compile fallback:
 1. Prefer `src/Frontend.elm` when present.
@@ -49,3 +53,9 @@ Use this entry file selection rule for local compile fallback:
 1. If Lamdera reports unknown app, check git remotes.
 2. Configure a `lamdera` remote for the repository according to dashboard instructions.
 3. Re-run `lamdera login`, then `lamdera check`.
+
+## elm-review setup/execution
+
+1. If `elm-review` command is missing, prefer local install with `npm install --save-dev elm-review` and run via `npx elm-review`; global install via `npm install -g elm-review` is allowed.
+2. If `review/` does not exist and user opts in, initialize with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
+3. If compile checks fail, skip `elm-review` and report it as blocked by compile failure.

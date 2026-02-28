@@ -11,3 +11,7 @@ Use that file for intent-based source selection and boundaries.
   https://guide.elm-lang.org/
 - Elm package catalog (Lamdera frontend package usage only):
   https://package.elm-lang.org/
+- elm-review project documentation (workflow/configuration):
+  https://github.com/jfmengels/elm-review
+- elm-review CLI documentation (installation/report formats):
+  https://github.com/jfmengels/node-elm-review

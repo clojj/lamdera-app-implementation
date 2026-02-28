@@ -30,6 +30,10 @@ Optional diagnostics:
 1. `lamdera backend --help`
 2. `lamdera backend ...`
 
+Optional static analysis:
+1. `npx elm-review` (preferred, works with local installs)
+2. `elm-review` (global-install fallback)
+
 ## Task Classification Loop
 
 For every request, classify intent first:
@@ -109,11 +113,19 @@ If `lamdera` app context is present (git repo + `lamdera` remote), run `lamdera 
 If app context is missing, report `lamdera check` as blocked by missing `lamdera` remote and run local compile verification with `lamdera make <entry-elm-file> --output=/dev/null` instead.
 This local compile fallback is for local verification only and does not satisfy deploy readiness; deploy remains blocked until app context exists and `lamdera check` succeeds.
 
-5. Enforce deployment prerequisites.
+5. Run optional `elm-review` (only after compile success).
+If code changed and compile verification succeeded (`lamdera check` or local `lamdera make` fallback), run `elm-review` only when the project already has `review/` configured or the user explicitly opts in.
+For setup/execution, prefer local install with `npm install --save-dev elm-review` and run via `npx elm-review`; global install via `npm install -g elm-review` is allowed but less preferred.
+If `review/` is missing and user opts in to `elm-review`, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
+When eligible (and initialized when needed), run `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
+Report each finding with a markdown source link using `path:line:column` from `region.start` (prefer absolute file links when workspace path is known), plus rule and message.
+If compile verification failed, skip `elm-review` and report it as blocked by compile failure.
+
+6. Enforce deployment prerequisites.
 If the user has no account, direct them to sign up first.
 If not authenticated, run `lamdera login` from a repository linked to the app via `lamdera` remote.
 
-6. Deploy.
+7. Deploy.
 Run `lamdera deploy` once checks and auth are satisfied.
 You may mention git-push deployment as informational fallback only after explicitly confirming `lamdera check` succeeded.
 
@@ -122,13 +134,17 @@ You may mention git-push deployment as informational fallback only after explici
 After providing code or concrete implementation advice:
 1. If `lamdera` CLI is available and app context exists (git repo + `lamdera` remote), you must run `lamdera check` as the minimum verification command.
 2. If `lamdera` CLI is available but app context is missing, run local compile verification with `lamdera make <entry-elm-file> --output=/dev/null` and report that `lamdera check` was blocked by missing `lamdera` remote.
-3. Then select any additional verification commands from project-local scripts/config.
-4. If `lamdera` CLI is not available and no project-defined verification command exists, report "not runnable with current project metadata" instead of guessing commands.
-5. Run relevant build/compile verification and report the result.
-6. If tests are present, run relevant tests and report the result.
-7. Keep command guidance Lamdera-only; do not introduce `elm ...` command recommendations.
-8. If verification cannot run, state exactly what was not run and why.
-9. Never say "done/fixed/works" without command-backed evidence.
+3. Run relevant build/compile verification and report the result.
+4. If code changed and compile verification succeeded, run optional `elm-review` only when `review/` already exists or user explicitly opts in.
+5. If `review/` is missing and user opts in, initialize once with `npx elm-review init --template jfmengels/elm-review-config/application` for local installs, or `elm-review init --template jfmengels/elm-review-config/application` for global installs.
+6. When eligible (and initialized when needed), run `npx elm-review --report=json` for local installs, or `elm-review --report=json` for global installs.
+7. Report `elm-review` findings as markdown links with `path:line:column` using each error's `region.start`.
+8. Then select any additional verification commands from project-local scripts/config.
+9. If `lamdera` CLI is not available and no project-defined verification command exists, report "not runnable with current project metadata" instead of guessing commands.
+10. If tests are present, run relevant tests and report the result.
+11. Keep command guidance Lamdera-first; allow optional `elm-review` commands.
+12. If verification cannot run, state exactly what was not run and why.
+13. Never say "done/fixed/works" without command-backed evidence.
 
 Use this entry file selection rule for local compile fallback:
 1. Prefer `src/Frontend.elm` when present.
@@ -156,6 +172,8 @@ Use these sources for guidance:
 1. Lamdera docs for commands and platform workflow.
 2. Elm guide for Elm language/frontend design concepts only.
 3. Elm package catalog (`https://package.elm-lang.org/`) for package discovery in Lamdera frontend code only.
+4. `elm-review` docs (`https://github.com/jfmengels/elm-review`) for workflow and configuration concepts.
+5. `elm-review` CLI docs (`https://github.com/jfmengels/node-elm-review`) for setup/report formats.
 
 Keep command recommendations aligned with documented Lamdera CLI behavior.
 
